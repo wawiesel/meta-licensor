@@ -1,7 +1,7 @@
 #ifndef BASE_H_
 #define BASE_H_
 
-#ifdef __unix__
+#ifdef __APPLE__
 #include <limits.h>
 #define DllExport
 #ifndef MAX_PATH

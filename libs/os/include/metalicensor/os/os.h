@@ -5,7 +5,7 @@
 #include <stddef.h>
 //definition of size_t
 #include <stdlib.h>
-#ifdef __unix__
+#ifdef __APPLE__
 #include <stdbool.h>
 #endif
 #include "metalicensor/base/base.h"

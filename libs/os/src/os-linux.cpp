@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include <valgrind/memcheck.h>
+//#include <valgrind/memcheck.h>
 #include <paths.h>
 
 #include <stdlib.h>
@@ -13,6 +13,7 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #include "metalicensor/os/os.h"
 #include "metalicensor/keys/public-key.h"
 #include "metalicensor/base/logger.h"
@@ -22,7 +23,7 @@
 #include <openssl/pem.h>
 #include <openssl/err.h>
 
-#include <mntent.h>
+//#include <mntent.h>
 #include <dirent.h>
 #include <stdio.h>
 
@@ -37,56 +38,55 @@
  *@param uuid uuid as read in /dev/disk/by-uuid
  *@param buffer_out: unsigned char buffer[8] output buffer for result
  */
-static void parseUUID(const char *uuid, unsigned char* buffer_out,
-		unsigned int out_size) {
-	size_t len;
-	unsigned int i, j;
-	char * hexuuid;
-	unsigned char cur_character;
-	//remove characters not in hex set
-	len = strlen(uuid);
-	hexuuid = (char *) malloc(sizeof(char) * strlen(uuid));
-	memset(buffer_out, 0, out_size);
-	memset(hexuuid, 0, sizeof(char) * strlen(uuid));
-
-	for (i = 0, j = 0; i < len; i++) {
-		if (isxdigit(uuid[i])) {
-			hexuuid[j] = uuid[i];
-			j++;
-		} else {
-			//skip
-			continue;
-		}
-	}
-	if (j % 2 == 1) {
-		hexuuid[j++] = '0';
-	}
-	hexuuid[j] = '\0';
-	for (i = 0; i < j / 2; i++) {
-		sscanf(&hexuuid[i * 2], "%2hhx", &cur_character);
-		buffer_out[i % out_size] = buffer_out[i % out_size] ^ cur_character;
-	}
-
-	free(hexuuid);
-}
+// static void parseUUID(const char *uuid, unsigned char* buffer_out,
+// 		unsigned int out_size) {
+// 	size_t len;
+// 	unsigned int i, j;
+// 	char * hexuuid;
+// 	unsigned char cur_character;
+// 	//remove characters not in hex set
+// 	len = strlen(uuid);
+// 	hexuuid = (char *) malloc(sizeof(char) * strlen(uuid));
+// 	memset(buffer_out, 0, out_size);
+// 	memset(hexuuid, 0, sizeof(char) * strlen(uuid));
+//
+// 	for (i = 0, j = 0; i < len; i++) {
+// 		if (isxdigit(uuid[i])) {
+// 			hexuuid[j] = uuid[i];
+// 			j++;
+// 		} else {
+// 			//skip
+// 			continue;
+// 		}
+// 	}
+// 	if (j % 2 == 1) {
+// 		hexuuid[j++] = '0';
+// 	}
+// 	hexuuid[j] = '\0';
+// 	for (i = 0; i < j / 2; i++) {
+// 		sscanf(&hexuuid[i * 2], "%2hhx", &cur_character);
+// 		buffer_out[i % out_size] = buffer_out[i % out_size] ^ cur_character;
+// 	}
+//
+// 	free(hexuuid);
+// }
 
 #define MAX_UNITS 20
 FUNCTION_RETURN getDiskInfos(DiskInfo * diskInfos, size_t * disk_info_size) {
+    return FUNC_RET_OK;
+/*
 	struct stat mount_stat, sym_stat;
-	/*static char discard[1024];
-	 char device[64], name[64], type[64];
-	 */
+	//static char discard[1024];
+	//char device[64], name[64], type[64];
 	char cur_dir[MAX_PATH];
 	struct mntent *ent;
-
+typedef unsigned long int __ino64_t;
 	int maxDrives, currentDrive, i, drive_found;
 	__ino64_t *statDrives;
 	DiskInfo *tmpDrives;
 	FILE *aFile;
 	DIR *disk_by_uuid_dir, *disk_by_label;
 	struct dirent *dir;
-	FUNCTION_RETURN result;
-
 	if (diskInfos != NULL) {
 		maxDrives = *disk_info_size;
 		tmpDrives = diskInfos;
@@ -99,9 +99,8 @@ FUNCTION_RETURN getDiskInfos(DiskInfo * diskInfos, size_t * disk_info_size) {
 	memset(statDrives, 0, sizeof(__ino64_t ) * maxDrives);
 	;
 
-	aFile = setmntent("/proc/mounts", "r");
+//	aFile = setmntent("/proc/mounts", "r");
 	if (aFile == NULL) {
-		/*proc not mounted*/
 		return FUNC_RET_ERROR;
 	}
 
@@ -194,24 +193,24 @@ FUNCTION_RETURN getDiskInfos(DiskInfo * diskInfos, size_t * disk_info_size) {
 	} else {
 		result = FUNC_RET_BUFFER_TOO_SMALL;
 	}
-	/*
-	 FILE *mounts = fopen(_PATH_MOUNTED, "r");
-	 if (mounts == NULL) {
-	 return ERROR;
-	 }
 
-	 while (fscanf(mounts, "%64s %64s %64s %1024[^\n]", device, name, type,
-	 discard) != EOF) {
-	 if (stat(device, &mount_stat) != 0)
-	 continue;
-	 if (filename_stat.st_dev == mount_stat.st_rdev) {
-	 fprintf(stderr, "device: %s; name: %s; type: %s\n", device, name,
-	 type);
-	 }
-	 }
-	 */
+// 	 FILE *mounts = fopen(_PATH_MOUNTED, "r");
+// 	 if (mounts == NULL) {
+// 	 return ERROR;
+// 	 }
+//
+// 	 while (fscanf(mounts, "%64s %64s %64s %1024[^\n]", device, name, type,
+// 	 discard) != EOF) {
+// 	 if (stat(device, &mount_stat) != 0)
+// 	 continue;
+// 	 if (filename_stat.st_dev == mount_stat.st_rdev) {
+// 	 fprintf(stderr, "device: %s; name: %s; type: %s\n", device, name,
+// 	 type);
+// 	 }
+// 	 }
 	free(statDrives);
 	return result;
+	*/
 }
 
 void os_initialize() {

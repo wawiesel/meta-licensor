@@ -21,6 +21,7 @@ else()
         "src/CryptoHelperLinux.cpp"
         ${INCLUDE_FILES}
     )
+
 endif()
 target_include_directories(metalic_crypto
     PUBLIC

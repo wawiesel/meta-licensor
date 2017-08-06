@@ -1,7 +1,7 @@
 #ifndef LICENSEPP_H_
 #define LICENSEPP_H_
 
-#ifdef __unix__
+#ifdef __APPLE__
 #define DllExport
 #ifndef MAX_PATH
 	#define MAX_PATH 1024

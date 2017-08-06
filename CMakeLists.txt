@@ -56,7 +56,8 @@ if(NOT WIN32)
     list(APPEND EXTERNAL_LIBS dl)
 endif(NOT WIN32)
 
-if(("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU") OR ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang"))
+
+if(("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU") OR ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang"))
     add_definitions(-Wall)
     add_definitions(-Wfatal-errors)
     add_definitions(-Wextra)

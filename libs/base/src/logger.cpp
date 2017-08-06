@@ -7,7 +7,7 @@
 #include <locale>
 #include <codecvt>
 #include <string>
-#ifdef __unix__
+#ifdef __APPLE__
 #include <unistd.h>
 #define MAX_PATH 255
 #else //windows
@@ -30,7 +30,7 @@ static void timenow(char * buffer) {
 }
 
 static std::string getLogFileName() {
-#ifdef __unix__
+#ifdef __APPLE__
     char const* folder = getenv("TMPDIR");
     if(folder==0)
         folder = "/tmp";

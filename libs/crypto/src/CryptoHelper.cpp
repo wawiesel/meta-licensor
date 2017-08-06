@@ -1,7 +1,7 @@
 
 #include <memory>
 #include "metalicensor/crypto/CryptoHelper.h"
-#ifdef __unix__
+#ifdef __APPLE__
 #include "metalicensor/crypto/CryptoHelperLinux.h"
 #else
 #include "metalicensor/crypto/CryptoHelperWindows.h"
@@ -12,7 +12,7 @@ using namespace std;
 namespace license {
 
     unique_ptr<CryptoHelper> CryptoHelper::getInstance() {
-    #ifdef __unix__
+    #ifdef __APPLE__
         unique_ptr<CryptoHelper> ptr((CryptoHelper*) new CryptoHelperLinux());
     #else
         unique_ptr<CryptoHelper> ptr((CryptoHelper*) new CryptoHelperWindows());

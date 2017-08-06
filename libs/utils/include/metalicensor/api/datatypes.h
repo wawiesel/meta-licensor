@@ -2,7 +2,7 @@
 #define DATATYPES_H_
 
 #include <stdlib.h>
-#ifdef __unix__
+#ifdef __APPLE__
 #include <stdbool.h>
 #define DllExport
 #else

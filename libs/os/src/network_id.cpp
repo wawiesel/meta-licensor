@@ -20,11 +20,19 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <ifaddrs.h>
-#include <linux/if_link.h>
-#include <netpacket/packet.h>
+//#include <linux/if_link.h>
 #include <string.h>
 #include <stdio.h>
 #include "metalicensor/os/os.h"
+#include <stdio.h>
+#include <sys/types.h>
+
+#ifdef AF_LINK
+#   include <net/if_dl.h>
+#endif
+#ifdef AF_PACKET
+#   include <netpacket/packet.h>
+#endif
 
 /**
  *
@@ -57,7 +65,7 @@ FUNCTION_RETURN getAdapterInfos(OsAdapterInfo * adapterInfos,
 
 	FUNCTION_RETURN f_return = FUNC_RET_OK;
 	struct ifaddrs *ifaddr, *ifa;
-	int family, i, n, if_name_position;
+	int family, i, if_name_position;
 	unsigned int if_num, if_max;
 	//char host[NI_MAXHOST];
 	char *ifnames;
@@ -72,7 +80,7 @@ FUNCTION_RETURN getAdapterInfos(OsAdapterInfo * adapterInfos,
 	}
 
 	/* count the maximum number of interfaces */
-	for (ifa = ifaddr, if_max = 0; ifa != NULL; ifa = ifa->ifa_next, n++) {
+	for (ifa = ifaddr, if_max = 0; ifa != NULL; ifa = ifa->ifa_next) {
 		if (ifa->ifa_addr == NULL) {
 			continue;
 		}
@@ -84,8 +92,8 @@ FUNCTION_RETURN getAdapterInfos(OsAdapterInfo * adapterInfos,
 	memset(ifnames, 0, NI_MAXHOST * if_max);
 	/* Walk through linked list, maintaining head pointer so we
 	 can free list later */
-	for (ifa = ifaddr, n = 0, if_num = 0; ifa != NULL;
-			ifa = ifa->ifa_next, n++) {
+	for (ifa = ifaddr, if_num = 0; ifa != NULL;
+			ifa = ifa->ifa_next) {
 		if (ifa->ifa_addr == NULL) {
 			continue;
 		}
@@ -108,7 +116,7 @@ FUNCTION_RETURN getAdapterInfos(OsAdapterInfo * adapterInfos,
 		 form of the latter for the common families) */
 #ifdef _DEBUG
 		printf("%-8s %s (%d)\n", ifa->ifa_name,
-				(family == AF_PACKET) ? "AF_PACKET" :
+				(family == AF_LINK) ? "AF_LINK" :
 				(family == AF_INET) ? "AF_INET" :
 				(family == AF_INET6) ? "AF_INET6" : "???", family);
 #endif
@@ -144,12 +152,12 @@ FUNCTION_RETURN getAdapterInfos(OsAdapterInfo * adapterInfos,
 				adapterInfos[if_name_position].ipv4_address[3] = (iaddr
 						& 0xff000000) >> 24;
 			}
-		} else if (family == AF_PACKET && ifa->ifa_data != NULL) {
-			struct sockaddr_ll *s1 = (struct sockaddr_ll*) ifa->ifa_addr;
+		} else if (family == AF_LINK && ifa->ifa_data != NULL) {
+            struct sockaddr_dl *s1 = ((struct sockaddr_dl *)ifa->ifa_addr);
 			if (adapterInfos != NULL && if_name_position < *adapter_info_size) {
 				for (i = 0; i < 6; i++) {
 					adapterInfos[if_name_position].mac_address[i] =
-							s1->sll_addr[i];
+							s1->sdl_data[i];
 #ifdef _DEBUG
 					printf("%02x:", s1->sll_addr[i]);
 #endif

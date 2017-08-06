@@ -6,6 +6,7 @@ add_executable(metalic_bootstrap
     $<TARGET_OBJECTS:metalic_crypto>
 )
 include_directories(${CMAKE_SOURCE_DIR}/libs/crypto/include/)
+MESSAGE( STATUS "ext=${EXTERNAL_LIBS}")
 target_link_libraries(metalic_bootstrap ${EXTERNAL_LIBS})
 set_target_properties(metalic_bootstrap PROPERTIES FOLDER "apps")
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/keys/metalicensor/keys/)
