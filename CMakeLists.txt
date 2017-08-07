@@ -47,14 +47,22 @@ add_definitions(-DBOOST_ALL_NO_LIB) # use boost in header-only mode (no linking)
 include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIRS})
 
-if(NOT WIN32)
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux" )
     find_package(OpenSSL REQUIRED)
     include_directories(${OPENSSL_INCLUDE_DIR})
     list(APPEND EXTERNAL_LIBS ${OPENSSL_CRYPTO_LIBRARY})
     find_package(ZLIB REQUIRED) # Zlib required when openssl version < 1.0.1f
     list(APPEND EXTERNAL_LIBS ${ZLIB_LIBRARIES})
     list(APPEND EXTERNAL_LIBS dl)
-endif(NOT WIN32)
+elseif( CMAKE_SYSTEM_NAME STREQUAL "Darwin" )
+    include_directories("/usr/local/opt/openssl/include")
+    include_directories("/opt/local/include/openssl")
+    list(APPEND EXTERNAL_LIBS "/usr/local/opt/openssl/lib/libcrypto.dylib")
+    list(APPEND EXTERNAL_LIBS "/usr/local/opt/openssl/lib/libssl.dylib")
+    find_package(ZLIB REQUIRED) # Zlib required when openssl version < 1.0.1f
+    list(APPEND EXTERNAL_LIBS ${ZLIB_LIBRARIES})
+    list(APPEND EXTERNAL_LIBS dl)
+endif()
 
 
 if(("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU") OR ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang"))

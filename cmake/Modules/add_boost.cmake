@@ -1,7 +1,7 @@
 
 
-#usage add_boost(	[STATIC] , 
-#					[STATIC_RUNTIME], 
+#usage add_boost(	[STATIC] ,
+#					[STATIC_RUNTIME],
 #					[USE_BOOST_CACHE], #If user wants to use a cache copy of Boost, get the path to this location.
 #					[BOOST_CACHE_DIR path],
 #					[TARGET_ARCHITECHTURE_32],
@@ -15,7 +15,7 @@
 #                            target_link_libraries debug/optimized keywords)
 
 include (CMakeParseArguments)
-	
+
 function(add_boost)
 	set(BoostVersion 1.55.0)
 	set(BoostSHA1 cef9a0cc7084b1d639e06cd3bc34e4251524c840)
@@ -24,7 +24,7 @@ function(add_boost)
     set(oneValueArgs BOOST_CACHE_DIR)
     set(multiValueArgs MODULES)
     cmake_parse_arguments(ADD_BOOST "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
-	
+
 	# Create build folder name derived from version
 	string(REGEX REPLACE "beta\\.([0-9])$" "beta\\1" BoostFolderName ${BoostVersion})
 	string(REPLACE "." "_" BoostFolderName ${BoostFolderName})
@@ -143,7 +143,7 @@ function(add_boost)
 		set(b2Bootstrap "bootstrap.bat")
 	  else()
 		set(b2Bootstrap "./bootstrap.sh")
-		if(${CMAKE_CXX_COMPILER_ID} STREQUAL "AppleClang")
+		if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
 		  list(APPEND b2Bootstrap --with-toolset=clang)
 		elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
 		  list(APPEND b2Bootstrap --with-toolset=gcc)
@@ -221,7 +221,7 @@ function(add_boost)
 	  list(APPEND b2Args variant=release cxxflags=-fPIC cxxflags=-std=c++11 -sNO_BZIP2=1 --layout=tagged)
 	  # Need to configure the toolset based on whatever version CMAKE_CXX_COMPILER is
 	  string(REGEX MATCH "[0-9]+\\.[0-9]+" ToolsetVer "${CMAKE_CXX_COMPILER_VERSION}")
-	  if(${CMAKE_CXX_COMPILER_ID} STREQUAL "AppleClang")
+	  if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
 		list(APPEND b2Args toolset=clang-${ToolsetVer})
 		if(HAVE_LIBC++)
 		  list(APPEND b2Args cxxflags=-stdlib=libc++ linkflags=-stdlib=libc++)
@@ -233,16 +233,16 @@ function(add_boost)
 
 	if(NOT ADD_BOOST_MODULES)
 		set (ADD_BOOST_MODULES atomic chrono context coroutine date_time exception filesystem
-				graph iostreams log math program_options python random regex signals system 
+				graph iostreams log math program_options python random regex signals system
 				test thread timer wave)
 	endif()
-	
+
 	foreach(Component ${ADD_BOOST_MODULES})
 	  if(${Component} STREQUAL "test")
 		set(libName "unit_test_framework")
 	  elseif(${Component} STREQUAL "math")
 		set(libName "math_c99l")
-	  else()	
+	  else()
 		set(libName ${Component})
 	  endif()
 	  if(MSVC)
@@ -251,7 +251,7 @@ function(add_boost)
 		elseif(MSVC12)
 		  set(CompilerName vc120)
 		endif()
-		string(REGEX MATCH "[0-9]_[0-9][0-9]" Version "${BoostFolderName}")	
+		string(REGEX MATCH "[0-9]_[0-9][0-9]" Version "${BoostFolderName}")
 		#http://www.boost.org/doc/libs/1_42_0/more/getting_started/windows.html#library-naming
 		set(OUTPUT_FILE ${BOOST_ROOT}/stage/lib/${WINDOWS_LIB_PREFIX}boost_${libName}-${CompilerName}-mt-${Version}.lib)
 		set(OUTPUT_FILE_DEBUG ${BOOST_ROOT}/stage/lib/${WINDOWS_LIB_PREFIX}boost_${libName}-${CompilerName}-mt-gd-${Version}.lib)
@@ -266,9 +266,9 @@ function(add_boost)
 		  endif()
 	  #endif()
 	endforeach()
-	
-	
-	LIST_REPLACE(ADD_BOOST_MODULES "test" "unit_test_framework")   
+
+
+	LIST_REPLACE(ADD_BOOST_MODULES "test" "unit_test_framework")
 	#   BOOST_ROOT             - Preferred installation prefix
 	#    (or BOOSTROOT)
 	#   BOOST_INCLUDEDIR       - Preferred include directory e.g. <prefix>/include
@@ -281,15 +281,15 @@ function(add_boost)
 	#clean up variables
 	mark_as_advanced (BOOST_ROOT BOOST_LIBRARYDIR)
 	unset(b2Path CACHE)
-	
+
 	set(Boost_LIBRARIES ${Boost_LIBRARIES} PARENT_SCOPE)
 endfunction()
 
 macro(LIST_REPLACE LIST OLDVALUE NEWVALUE)
-    list(FIND ADD_BOOST_MODULES ${OLDVALUE} find_idx)                                    
-    if(find_idx GREATER -1)                                                    
+    list(FIND ADD_BOOST_MODULES ${OLDVALUE} find_idx)
+    if(find_idx GREATER -1)
 		list(INSERT ${LIST} ${find_idx} ${NEWVALUE})
 		MATH(EXPR __INDEX "${find_idx} + 1")
 		list (REMOVE_AT ${LIST} ${__INDEX})
-	endif()       
-endmacro(LIST_REPLACE)                          
+	endif()
+endmacro(LIST_REPLACE)

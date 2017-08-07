@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include <valgrind/memcheck.h>
+//#include <valgrind/memcheck.h>
 #include <paths.h>
 
 #include <stdlib.h>
@@ -23,7 +23,7 @@
 #include <openssl/pem.h>
 #include <openssl/err.h>
 
-#include <mntent.h>
+//#include <mntent.h>
 #include <dirent.h>
 #include <stdio.h>
 
@@ -73,6 +73,10 @@ void parseUUID(const char *uuid, unsigned char* buffer_out,
 
 #define MAX_UNITS 20
 FUNCTION_RETURN getDiskInfos(DiskInfo * diskInfos, size_t * disk_info_size) {
+
+//this code uses mntent which is not available on Mac
+//the alternative is getmntinfo maybe?
+#if 0
 	struct stat mount_stat, sym_stat;
 	static char discard[1024];
 	char device[64], name[64], type[64];
@@ -208,6 +212,9 @@ FUNCTION_RETURN getDiskInfos(DiskInfo * diskInfos, size_t * disk_info_size) {
 	 }
 	free(statDrives);
 	return result;
+#else
+    return FUNC_RET_OK;
+#endif
 }
 
 void os_initialize() {

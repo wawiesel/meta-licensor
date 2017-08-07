@@ -1,7 +1,9 @@
 
 #include <memory>
 #include "metalicensor/crypto/CryptoHelper.h"
-#ifdef __APPLE__
+#if defined(__APPLE__)
+#include "metalicensor/crypto/CryptoHelperMac.h"
+#elif defined(__unix__)
 #include "metalicensor/crypto/CryptoHelperLinux.h"
 #else
 #include "metalicensor/crypto/CryptoHelperWindows.h"
@@ -12,7 +14,9 @@ using namespace std;
 namespace license {
 
     unique_ptr<CryptoHelper> CryptoHelper::getInstance() {
-    #ifdef __APPLE__
+    #if defined( __APPLE__ )
+        unique_ptr<CryptoHelper> ptr((CryptoHelper*) new CryptoHelperMac());
+    #elif defined( __unix__ )
         unique_ptr<CryptoHelper> ptr((CryptoHelper*) new CryptoHelperLinux());
     #else
         unique_ptr<CryptoHelper> ptr((CryptoHelper*) new CryptoHelperWindows());

@@ -11,6 +11,16 @@ if(WIN32)
         "src/CryptoHelperWindows.cpp"
         ${INCLUDE_FILES}
     )
+elseif(APPLE)
+    add_files(INCLUDE_FILES
+        "include/metalicensor/crypto/CryptoHelper.h"
+        "include/metalicensor/crypto/CryptoHelperMac.h"
+    )
+    add_library(metalic_crypto OBJECT
+        "src/CryptoHelper.cpp"
+        "src/CryptoHelperMac.cpp"
+        ${INCLUDE_FILES}
+    )
 else()
     add_files(INCLUDE_FILES
         "include/metalicensor/crypto/CryptoHelper.h"

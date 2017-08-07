@@ -1,14 +1,27 @@
 #ifndef LICENSEPP_H_
 #define LICENSEPP_H_
 
-#ifdef __APPLE__
+#if defined(__APPLE__)
+
 #define DllExport
+
 #ifndef MAX_PATH
-	#define MAX_PATH 1024
+#    define MAX_PATH 1024
 #endif
+
+#elif defined(__unix__)
+
+#define DllExport
+
+#ifndef MAX_PATH
+#    define MAX_PATH 1024
+#endif
+
 #else
+
 #include <windows.h>
 #define DllExport  __declspec( dllexport )
+
 #endif
 
 #include "metalicensor/api/datatypes.h"

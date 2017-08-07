@@ -66,7 +66,9 @@ BOOST_AUTO_TEST_CASE( env_var_not_defined ) {
 BOOST_AUTO_TEST_CASE( read_env_var ) {
 	char str[MAX_PATH];
 	strcpy(str,"LIC_VAR=" METALICENSOR_TEST_SRC_DIR "/test_reader.ini");
-#ifdef __APPLE__
+#if defined(__APPLE__)
+	putenv(str);
+#elif defined(__unix__)
 	putenv(str);
 #else //windows
     _putenv(str);

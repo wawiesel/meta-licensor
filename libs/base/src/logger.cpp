@@ -7,14 +7,25 @@
 #include <locale>
 #include <codecvt>
 #include <string>
-#ifdef __APPLE__
+
+#if defined(__APPLE__)
+
 #include <unistd.h>
 #define MAX_PATH 255
+
+#elif defined(__unix__)
+
+#include <unistd.h>
+#define MAX_PATH 255
+
 #else //windows
+
 #include <windows.h>
 #include <process.h>
 #define getpid _getpid
-#endif //windows
+
+#endif
+
 #include "metalicensor/base/logger.h"
 
 static FILE *logFile = NULL;
@@ -30,7 +41,12 @@ static void timenow(char * buffer) {
 }
 
 static std::string getLogFileName() {
-#ifdef __APPLE__
+#if defined(__APPLE__)
+    char const* folder = getenv("TMPDIR");
+    if(folder==0)
+        folder = "/tmp";
+    return std::string(folder)+"/open-license.log";
+#elif defined(__unix__)
     char const* folder = getenv("TMPDIR");
     if(folder==0)
         folder = "/tmp";

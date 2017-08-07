@@ -1,15 +1,27 @@
 #ifndef BASE_H_
 #define BASE_H_
 
-#ifdef __APPLE__
+#if defined(__APPLE__)
+
 #include <limits.h>
 #define DllExport
 #ifndef MAX_PATH
 	#define MAX_PATH PATH_MAX
 #endif //ndef(MAX_PATH)
+
+#elif defined(__unix__)
+
+#include <limits.h>
+#define DllExport
+#ifndef MAX_PATH
+	#define MAX_PATH PATH_MAX
+#endif //ndef(MAX_PATH)
+
 #else //windows
+
 #include <windows.h>
 #define DllExport  __declspec( dllexport )
+
 #endif //windows
 
 enum FUNCTION_RETURN {

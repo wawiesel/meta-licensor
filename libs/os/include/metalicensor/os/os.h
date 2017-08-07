@@ -1,13 +1,20 @@
-
 #ifndef OS_DEPENDENT_HPP_
 #define OS_DEPENDENT_HPP_
 
 #include <stddef.h>
 //definition of size_t
 #include <stdlib.h>
-#ifdef __APPLE__
+
+#if defined(__APPLE__)
+
 #include <stdbool.h>
+
+#elif defined(__unix__)
+
+#include <stdbool.h>
+
 #endif
+
 #include "metalicensor/base/base.h"
 
 enum VIRTUALIZATION {

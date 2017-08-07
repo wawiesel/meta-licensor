@@ -9,13 +9,20 @@ if(WIN32)
         "src/os-win.cpp"
         ${INCLUDE_FILES}
     )
-else()
+elseif( CMAKE_SYSTEM_NAME STREQUAL "Linux" )
     add_library(metalic_os OBJECT
         "src/os-linux.cpp"
         "src/network_id.cpp"
         ${INCLUDE_FILES}
     )
+elseif( CMAKE_SYSTEM_NAME STREQUAL "Darwin" )
+    add_library(metalic_os OBJECT
+        "src/os-mac.cpp"
+        "src/network_id.cpp"
+        ${INCLUDE_FILES}
+    )
 endif()
+
 add_dependencies(metalic_os public_key)
 target_include_directories(metalic_os
     PUBLIC

@@ -2,12 +2,22 @@
 #define DATATYPES_H_
 
 #include <stdlib.h>
-#ifdef __APPLE__
+
+#if defined(__APPLE__)
+
 #include <stdbool.h>
 #define DllExport
+
+#elif defined(__unix__)
+
+#include <stdbool.h>
+#define DllExport
+
 #else
+
 #include <windows.h>
 #define DllExport  __declspec( dllexport )
+
 #endif
 
 #define ENVIRONMENT_VAR_NAME_MAX 64

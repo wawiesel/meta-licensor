@@ -20,12 +20,21 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <ifaddrs.h>
-//#include <linux/if_link.h>
 #include <string.h>
 #include <stdio.h>
 #include "metalicensor/os/os.h"
 #include <stdio.h>
 #include <sys/types.h>
+
+#if defined(__APPLE__)
+
+#elif defined(__unix__)
+
+#include <linux/if_link.h>
+
+#else //windows
+
+#endif
 
 #ifdef AF_LINK
 #   include <net/if_dl.h>

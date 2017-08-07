@@ -7,11 +7,20 @@
 #include "metalicensor/reader/pc-identifiers.h"
 #include "metalicensor/base/base64.h"
 #include "metalicensor/base/base.h"
-#ifdef __APPLE__
+
+#if defined(__APPLE__)
+
 #include <stdbool.h>
-//#include <valgrind/memcheck.h>
+
+#elif defined(__unix__)
+
+#include <stdbool.h>
+#include <valgrind/memcheck.h>
+
 #else
+
 #include <Windows.h>
+
 #endif
 
 static FUNCTION_RETURN generate_disk_pc_id(PcIdentifier * identifiers,
